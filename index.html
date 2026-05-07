@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang='id'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Album Untuk Manha</title>
+  <link href='https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Gochi+Hand&family=Nunito:wght@400;600;700&display=swap' rel='stylesheet'>
+  <style>
+    :root {
+      --bg-color: #fcf9f2;
+      --binder-color: #e8e2d6;
+      --accent-color: #8c7365;
+      --paper-white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: 'Nunito', sans-serif;
+      background-color: var(--bg-color);
+      background-image: radial-gradient(#dcd5c9 0.5px, transparent 0.5px); background-size: 20px 20px;
+      color: #4a443f; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;
+    }
+    .album-container { width: 100%; max-width: 1100px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .binder-book {
+      position: relative; width: 100%; height: 750px; background: var(--binder-color);
+      border-radius: 15px; box-shadow: 20px 20px 60px rgba(0,0,0,0.15), inset 2px 2px 5px rgba(255,255,255,0.5);
+      display: flex; padding: 15px; overflow: hidden;
+    }
+    .spine-rings { position: absolute; left: 50%; top: 0; bottom: 0; width: 40px; transform: translateX(-50%); display: flex; flex-direction: column; justify-content: space-around; align-items: center; z-index: 10; padding: 20px 0; }
+    .ring { width: 50px; height: 12px; background: linear-gradient(90deg, #999, #ddd, #999); border-radius: 10px; box-shadow: 0 4px 5px rgba(0,0,0,0.2); }
+    .page-left, .page-right { 
+      flex: 1; background: var(--paper-white); margin: 5px; border-radius: 5px; 
+      position: relative; padding: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.05); 
+      overflow-y: auto; transition: opacity 0.4s ease; 
+    }
+    .fade-out { opacity: 0; }
+    .cover-page { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fffaf0; }
+    .cover-title { font-family: 'Kalam', cursive; font-size: 3rem; color: var(--accent-color); margin: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; }
+
+    .photo-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+      gap: 15px; width: 100%; padding: 10px 0; 
+    }
+    .photo-frame {
+        background: #fff; padding: 8px 8px 25px 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        position: relative; width: 100%;
+        border: 1px solid #eee;
+    }
+    .photo-frame img { 
+      width: 100%; 
+      height: 180px; 
+      object-fit: contain; /* Memastikan foto tidak terpotong */
+      background: #fdfdfd;
+      display: block; 
+    }
+    .caption-sticker { 
+      position: absolute; bottom: 5px; left: 0; right: 0; 
+      font-family: 'Gochi Hand', cursive; font-size: 0.85rem; 
+      color: #888; text-align: center; 
+    }
+
+    .note-section { 
+      margin-top: 20px; font-family: 'Kalam', cursive; 
+      line-height: 1.6; font-size: 1.2rem; color: #554; 
+      background: #fdfaf3; padding: 15px; border-left: 3px solid var(--accent-color);
+    }
+    .date-tag { font-family: 'Nunito', sans-serif; font-weight: bold; color: #b5a48b; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; }
+    .nav-controls { display: flex; gap: 20px; margin-top: 10px; }
+    button { background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-family: 'Kalam', cursive; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+    button:hover { background: #765f52; }
+    
+    @media (max-width: 768px) { 
+      .binder-book { flex-direction: column; height: auto; } 
+      .spine-rings { display: none; } 
+      .photo-grid { grid-template-columns: 1fr 1fr; } 
+    }
+  </style>
+</head>
+<body>
+  <div class='album-container'>
+    <div class='binder-book'>
+      <div class='spine-rings'><div class='ring'></div><div class='ring'></div><div class='ring'></div><div class='ring'></div><div class='ring'></div><div class='ring'></div><div class='ring'></div></div>
+      <div class='page-left' id='leftContent'></div>
+      <div class='page-right' id='rightContent'></div>
+    </div>
+    <div class='nav-controls'>
+      <button onclick='changePage(-1)'>⬅ Sebelumnya</button>
+      <button onclick='changePage(1)'>Berikutnya ➡</button>
+    </div>
+  </div>
+  <script>
+    const data = [{"type": "cover", "title": "Album Untuk Manha", "subtitle": "kumpulan cerita kecil dan perasaan yang tulus", "note": "buka halaman berikutnya untuk melihat perjalanan kita"}, {"type": "spread", "date": "hari istimewa kita", "note": "kamu membuat hari-hari biasa terasa lembut dan indah.", "photos": [{"src": "assets/foto-001.jpeg", "label": "foto 1", "rotation": -3}, {"src": "assets/foto-002.jpeg", "label": "foto 2", "rotation": -1}, {"src": "assets/foto-003.jpeg", "label": "foto 3", "rotation": -4}]}, {"type": "spread", "date": "kenangan manis", "note": "setiap kenangan kecil bersamamu terasa sangat berharga untuk disimpan.", "photos": [{"src": "assets/foto-004.jpeg", "label": "foto 4", "rotation": 4}, {"src": "assets/foto-005.jpeg", "label": "foto 5", "rotation": 3}, {"src": "assets/foto-006.jpeg", "label": "foto 6", "rotation": -1}, {"src": "assets/foto-007.jpeg", "label": "foto 7", "rotation": -1}]}, {"type": "spread", "date": "momen yang tenang", "note": "jika cinta punya bentuk yang tenang, mungkin akan terlihat seperti ini.", "photos": [{"src": "assets/foto-008.jpeg", "label": "foto 8", "rotation": -4}, {"src": "assets/foto-009.jpeg", "label": "foto 9", "rotation": 1}, {"src": "assets/foto-010.jpeg", "label": "foto 10", "rotation": 0}, {"src": "assets/foto-011.jpeg", "label": "foto 11", "rotation": 0}]}, {"type": "spread", "date": "untuk kita", "note": "beberapa momen tetap terasa hangat di hati untuk waktu yang lama.", "photos": [{"src": "assets/foto-012.jpeg", "label": "foto 12", "rotation": 3}, {"src": "assets/foto-013.jpeg", "label": "foto 13", "rotation": 1}, {"src": "assets/foto-014.jpeg", "label": "foto 14", "rotation": 2}, {"src": "assets/foto-015.jpeg", "label": "foto 15", "rotation": -1}]}, {"type": "spread", "date": "halaman tentang kita", "note": "senyummu hidup dengan lembut di begitu banyak ingatanku.", "photos": [{"src": "assets/foto-016.jpeg", "label": "foto 16", "rotation": -1}, {"src": "assets/foto-017.jpeg", "label": "foto 17", "rotation": -4}, {"src": "assets/foto-018.jpeg", "label": "foto 18", "rotation": -3}]}, {"type": "spread", "date": "hari istimewa kita", "note": "aku masih menyimpan potongan-potongan kecil tentang kita dengan hati-hati.", "photos": [{"src": "assets/foto-019.jpeg", "label": "foto 19", "rotation": 4}, {"src": "assets/foto-020.jpeg", "label": "foto 20", "rotation": 2}, {"src": "assets/foto-021.jpeg", "label": "foto 21", "rotation": 3}]}, {"type": "spread", "date": "kenangan manis", "note": "terima kasih telah membuat momen sederhana terasa begitu spesial.", "photos": [{"src": "assets/foto-022.jpeg", "label": "foto 22", "rotation": -3}, {"src": "assets/foto-023.jpeg", "label": "foto 23", "rotation": 1}, {"src": "assets/foto-024.jpeg", "label": "foto 24", "rotation": -3}]}, {"type": "spread", "date": "momen yang tenang", "note": "aku berharap bagian baik dari kita tidak akan pernah pudar.", "photos": [{"src": "assets/foto-025.jpeg", "label": "foto 25", "rotation": -1}, {"src": "assets/foto-026.jpeg", "label": "foto 26", "rotation": 3}, {"src": "assets/foto-027.jpeg", "label": "foto 27", "rotation": 0}, {"src": "assets/foto-028.jpeg", "label": "foto 28", "rotation": 4}]}, {"type": "spread", "date": "untuk kita", "note": "kamu masih menjadi salah satu perasaan favoritku.", "photos": [{"src": "assets/foto-029.jpeg", "label": "foto 29", "rotation": 3}, {"src": "assets/foto-030.jpeg", "label": "foto 30", "rotation": 3}, {"src": "assets/foto-031.jpeg", "label": "foto 31", "rotation": 2}, {"src": "assets/foto-032.jpeg", "label": "foto 32", "rotation": -3}]}, {"type": "spread", "date": "halaman tentang kita", "note": "beberapa kenangan terlalu berharga untuk dilepaskan.", "photos": [{"src": "assets/foto-033.jpeg", "label": "foto 33", "rotation": 4}, {"src": "assets/foto-034.jpeg", "label": "foto 34", "rotation": -3}, {"src": "assets/foto-035.jpeg", "label": "foto 35", "rotation": 0}, {"src": "assets/foto-036.jpeg", "label": "foto 36", "rotation": 1}]}, {"type": "spread", "date": "hari istimewa kita", "note": "aku minta maaf untuk bagian dari diriku yang pernah menyakitimu.", "photos": [{"src": "assets/foto-037.jpeg", "label": "foto 37", "rotation": 1}, {"src": "assets/foto-038.jpeg", "label": "foto 38", "rotation": 0}, {"src": "assets/foto-039.jpeg", "label": "foto 39", "rotation": 2}, {"src": "assets/foto-040.jpeg", "label": "foto 40", "rotation": 2}]}, {"type": "spread", "date": "kenangan manis", "note": "jika aku bisa mengulang beberapa momen, aku akan melakukannya lebih baik.", "photos": [{"src": "assets/foto-041.jpeg", "label": "foto 41", "rotation": 4}, {"src": "assets/foto-042.jpeg", "label": "foto 42", "rotation": -3}, {"src": "assets/foto-043.jpeg", "label": "foto 43", "rotation": 4}]}, {"type": "spread", "date": "momen yang tenang", "note": "bahkan dalam diam, kamu tetap sangat berarti bagiku.", "photos": [{"src": "assets/foto-044.jpeg", "label": "foto 44", "rotation": 1}, {"src": "assets/foto-045.jpeg", "label": "foto 45", "rotation": -2}, {"src": "assets/foto-046.jpeg", "label": "foto 46", "rotation": -2}]}, {"type": "spread", "date": "untuk kita", "note": "halaman ini kecil, tapi apa yang aku rasakan tidaklah kecil.", "photos": [{"src": "assets/foto-047.jpeg", "label": "foto 47", "rotation": 3}, {"src": "assets/foto-048.jpeg", "label": "foto 48", "rotation": -4}, {"src": "assets/foto-049.jpeg", "label": "foto 49", "rotation": -3}]}, {"type": "spread", "date": "halaman tentang kita", "note": "aku masih berharap untuk lebih banyak kenangan lembut bersamamu.", "photos": [{"src": "assets/foto-050.jpeg", "label": "foto 50", "rotation": 0}, {"src": "assets/foto-051.jpeg", "label": "foto 51", "rotation": 2}, {"src": "assets/foto-052.jpeg", "label": "foto 52", "rotation": 3}, {"src": "assets/foto-053.jpeg", "label": "foto 53", "rotation": 3}]}, {"type": "spread", "date": "hari istimewa kita", "note": "kamu membuat hari-hari biasa terasa lembut dan indah.", "photos": [{"src": "assets/foto-054.jpeg", "label": "foto 54", "rotation": -2}, {"src": "assets/foto-055.jpeg", "label": "foto 55", "rotation": 1}, {"src": "assets/foto-056.jpeg", "label": "foto 56", "rotation": 0}, {"src": "assets/foto-057.jpeg", "label": "foto 57", "rotation": 2}]}, {"type": "spread", "date": "kenangan manis", "note": "setiap kenangan kecil bersamamu terasa sangat berharga untuk disimpan.", "photos": [{"src": "assets/foto-058.jpeg", "label": "foto 58", "rotation": -1}, {"src": "assets/foto-059.jpeg", "label": "foto 59", "rotation": 0}, {"src": "assets/foto-060.jpeg", "label": "foto 60", "rotation": 4}, {"src": "assets/foto-061.jpeg", "label": "foto 61", "rotation": 3}]}, {"type": "spread", "date": "momen yang tenang", "note": "jika cinta punya bentuk yang tenang, mungkin akan terlihat seperti ini.", "photos": [{"src": "assets/foto-062.jpeg", "label": "foto 62", "rotation": 3}, {"src": "assets/foto-063.jpeg", "label": "foto 63", "rotation": -4}, {"src": "assets/foto-064.jpeg", "label": "foto 64", "rotation": -2}]}, {"type": "spread", "date": "untuk kita", "note": "beberapa momen tetap terasa hangat di hati untuk waktu yang lama.", "photos": [{"src": "assets/foto-065.jpeg", "label": "foto 65", "rotation": -1}, {"src": "assets/foto-066.jpeg", "label": "foto 66", "rotation": 0}, {"src": "assets/foto-067.jpeg", "label": "foto 67", "rotation": 2}, {"src": "assets/foto-068.jpeg", "label": "foto 68", "rotation": -3}]}, {"type": "spread", "date": "halaman tentang kita", "note": "senyummu hidup dengan lembut di begitu banyak ingatanku.", "photos": [{"src": "assets/foto-069.jpeg", "label": "foto 69", "rotation": 1}, {"src": "assets/foto-070.jpeg", "label": "foto 70", "rotation": 0}, {"src": "assets/foto-071.jpeg", "label": "foto 71", "rotation": 0}]}, {"type": "spread", "date": "hari istimewa kita", "note": "aku masih menyimpan potongan-potongan kecil tentang kita dengan hati-hati.", "photos": [{"src": "assets/foto-072.jpeg", "label": "foto 72", "rotation": 0}, {"src": "assets/foto-073.jpeg", "label": "foto 73", "rotation": 0}, {"src": "assets/foto-074.jpeg", "label": "foto 74", "rotation": 2}]}, {"type": "spread", "date": "kenangan manis", "note": "terima kasih telah membuat momen sederhana terasa begitu spesial.", "photos": [{"src": "assets/foto-075.jpeg", "label": "foto 75", "rotation": -3}, {"src": "assets/foto-076.jpeg", "label": "foto 76", "rotation": -3}, {"src": "assets/foto-077.jpeg", "label": "foto 77", "rotation": 0}, {"src": "assets/foto-078.jpeg", "label": "foto 78", "rotation": -1}]}, {"type": "spread", "date": "momen yang tenang", "note": "aku berharap bagian baik dari kita tidak akan pernah pudar.", "photos": [{"src": "assets/foto-079.jpeg", "label": "foto 79", "rotation": -2}, {"src": "assets/foto-080.jpeg", "label": "foto 80", "rotation": 1}]}];
+    let currentIndex = 0;
+    const left = document.getElementById('leftContent');
+    const right = document.getElementById('rightContent');
+
+    function updatePages() {
+      const spread = data[currentIndex];
+      if (spread.type === 'cover') {
+          left.innerHTML = `<div class='cover-page'><h1 class='cover-title'>${spread.title}</h1><p style="font-family:'Gochi Hand'; font-size:1.4rem;">${spread.subtitle}</p></div>`;
+          right.innerHTML = `<div class='cover-page'><div class='note-section'>${spread.note}</div><div style='margin-top:40px; font-size:5rem;'>📔</div></div>`;
+      } else {
+          // Sisi Kiri: Judul dan Note
+          left.innerHTML = `
+            <div class='date-tag'>${spread.date}</div>
+            <div class='note-section'>"${spread.note}"</div>
+            <div style='margin-top:40px; text-align:center; font-size:3rem;'>✨</div>
+          `;
+          
+          // Sisi Kanan: Foto Grid
+          let photosHtml = `<div class='photo-grid'>`;
+          spread.photos.forEach(p => {
+            photosHtml += `<div class='photo-frame' style='transform: rotate(${p.rotation}deg)'><img src='${p.src}'><div class='caption-sticker'>${p.label}</div></div>`;
+          });
+          photosHtml += `</div>`;
+          right.innerHTML = photosHtml;
+      }
+      left.classList.remove('fade-out');
+      right.classList.remove('fade-out');
+    }
+
+    function changePage(direction) {
+        const newIndex = currentIndex + direction;
+        if (newIndex >= 0 && newIndex < data.length) {
+            left.classList.add('fade-out');
+            right.classList.add('fade-out');
+            setTimeout(() => { currentIndex = newIndex; updatePages(); }, 400);
+        }
+    }
+    updatePages();
+  </script>
+</body>
+</html>
